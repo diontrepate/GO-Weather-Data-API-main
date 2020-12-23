@@ -1,17 +1,39 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-func apiResponse(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(`{"message":"hello world!"}`))
+func main() {
+
+	// := used for declaration, it can also assign values
+	r := gin.Default()
+
+	// The * denotes the variable variable suffixed as a pointer
+	r.GET("/start", func(c *gin.Context) {
+		retWeather := Weather{Day: "Monday", Temp: 86}
+
+		actual, err := json.Marshal(retWeather)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		c.Data(http.StatusOK, gin.MIMEJSON, actual)
+
+		fmt.Println("SUCCESS")
+	})
+
+	r.Run()
 }
 
-func main() {
-	http.HandleFunc("/", apiResponse)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+// Made capitolized to allow export ability
+type Weather struct {
+	Day  string
+	Temp int
 }
