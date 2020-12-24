@@ -12,6 +12,9 @@ import (
 )
 
 func main() {
+
+	// Loads the properties file for env variables. This file should never be commited
+	// after the initial commit
 	godotenv.Load("configurations/openWeatherConfig.env")
 
 	// := used for declaration, it can also assign values
@@ -21,8 +24,10 @@ func main() {
 	// The * denotes the variable variable suffixed as a pointer
 	r.GET("/weather-data", func(c *gin.Context) {
 
+		city := c.Query("city")
+
 		// The _ allows us to bypass the other return types
-		response, _ := http.Get("http://api.openweathermap.org/data/2.5/weather?q=Kenosha&appid=" + os.Getenv("API_KEY"))
+		response, _ := http.Get("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + os.Getenv("API_KEY"))
 
 		responseData, err := ioutil.ReadAll(response.Body)
 
